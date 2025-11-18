@@ -1,1 +1,0 @@
- This is my learning phase for Django

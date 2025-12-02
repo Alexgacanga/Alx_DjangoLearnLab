@@ -4,9 +4,9 @@ from .models import Book
 
 
 @permission_required('content.can_view', raise_exception=True)
-def article_list(request):
-    articles = Article.objects.all()
-    return render(request, 'content/article_list.html', {'articles': articles})
+def book_list(request):
+    books = book.objects.all()
+    return render(request, 'content/article_list.html', {'books': books})
 
 
 @permission_required('content.can_create', raise_exception=True)

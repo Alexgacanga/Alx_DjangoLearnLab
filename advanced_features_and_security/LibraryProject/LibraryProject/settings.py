@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-1vz5%25!lh0#%rv8h(0tv-!c!brhtse&8b$_w$upx(v$j6d^d7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -82,6 +82,14 @@ DATABASES = {
     }
 }
 
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+SECURE_BROWSER_XSS_FILTER = True 
+
+X_FRAME_OPTIONS = "DENY"
+
+CSRF_COOKIE_SECURE = True           # Prevents cookie theft
+SESSION_COOKIE_SECURE = True        # Forces HTTPS for session cookies
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

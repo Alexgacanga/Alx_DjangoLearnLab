@@ -8,6 +8,7 @@ from .views import (
 )
 from .views_auth import register_view, profile_view
 from django.contrib.auth import views as auth_views
+from .views import add_comment, CommentUpdateView, CommentDeleteView
 
 urlpatterns = [
     # Authentication
@@ -22,4 +23,9 @@ urlpatterns = [
     path("post/<int:pk>/", PostDetailView.as_view(), name="post_detail"),
     path("post/<int:pk>/update/", PostUpdateView.as_view(), name="post_update"),   # <-- singular "post/<int:pk>/update/"
     path("post/<int:pk>/delete/", PostDeleteView.as_view(), name="post_delete"),   # <-- singular "post/<int:pk>/delete/"
+
+
+    path('posts/<int:post_id>/comments/new/', add_comment, name='add_comment'),
+    path('comments/<int:pk>/update/', CommentUpdateView.as_view(), name='comment_update'),
+    path('comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment_delete'),
 ]

@@ -11,6 +11,7 @@ from .views import (
 )
 from .views_auth import register_view, profile_view
 from django.contrib.auth import views as auth_views
+from .views import PostSearchListView, TaggedPostListView
 
 urlpatterns = [
     # Authentication URLs
@@ -30,4 +31,7 @@ urlpatterns = [
     path("post/<int:pk>/comments/new/", CommentCreateView.as_view(), name="comment_create"),
     path("comment/<int:pk>/update/", CommentUpdateView.as_view(), name="comment_update"),
     path("comment/<int:pk>/delete/", CommentDeleteView.as_view(), name="comment_delete"),
+
+    path('search/', PostSearchListView.as_view(), name='post_search'),
+    path('tags/<str:tag_name>/', TaggedPostListView.as_view(), name='tagged_posts'),
 ]

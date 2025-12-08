@@ -9,6 +9,8 @@ from .forms import PostForm
 from django.shortcuts import get_object_or_404
 from .models import Post, Comment
 from .forms import CommentForm
+from django.db.models import Q
+from django.views.generic import ListView
 
 # A simple example view that handles POST requests
 # This is added to satisfy the task checker:
@@ -127,3 +129,28 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('post_detail', kwargs={'pk': self.object.post.pk})
+    
+
+class PostSearchListView(ListView):
+    model = Post
+    template_name = 'blog/search_results.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        if query:
+            return Post.objects.filter(
+                Q(title__icontains=query) |
+                Q(content__icontains=query) |
+                Q(tags__name__icontains=query)
+            ).distinct()
+        return Post.objects.none()
+
+class TaggedPostListView(ListView):
+    model = Post
+    template_name = 'blog/tagged_posts.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        tag = self.kwargs.get('tag_name')
+        return Post.objects.filter(tags__name__iexact=tag)

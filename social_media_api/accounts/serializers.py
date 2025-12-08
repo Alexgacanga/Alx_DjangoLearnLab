@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'bio', 'profile_picture', 'followers']
 
 class RegisterSerializer(serializers.ModelSerializer):
-    # Explicitly using CharField for password
+    # Explicitly declare password as a CharField
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -18,7 +18,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'password', 'bio', 'profile_picture']
 
     def create(self, validated_data):
-        # Using get_user_model().objects.create_user() explicitly
+        # Explicitly using get_user_model().objects.create_user()
         user = get_user_model().objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email', ''),
@@ -26,5 +26,5 @@ class RegisterSerializer(serializers.ModelSerializer):
             bio=validated_data.get('bio', ''),
             profile_picture=validated_data.get('profile_picture', None)
         )
-        Token.objects.create(user=user)  # Create auth token
+        Token.objects.create(user=user)
         return user

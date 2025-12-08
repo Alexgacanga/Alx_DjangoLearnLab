@@ -1,7 +1,8 @@
-from rest_framework import generics, permissions
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from .models import Book
 from .serializers import BookSerializer
+from rest_framework import generics, permissions, filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 """
 Generic Views for Book API
@@ -28,18 +29,26 @@ Customization:
       `perform_update` to allow custom logic during save operations.
 """
 
-
 class BookListView(generics.ListAPIView):
-    """
-    ListView: Returns a list of all books.
-
-    Permissions:
-        - Accessible by anyone (read-only).
-    """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [permissions.AllowAny]
 
+    # Enable DRF filters
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter
+    ]
+
+    # Filter fields (exact matches)
+    filterset_fields = ['title', 'author', 'publication_year']
+
+    # Fields that search will apply to
+    search_fields = ['title', 'author__name']
+
+    # Fields allowed for ordering
+    ordering_fields = ['title', 'publication_year']
 
 class BookDetailView(generics.RetrieveAPIView):
     """

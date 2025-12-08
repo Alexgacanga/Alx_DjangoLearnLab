@@ -12,13 +12,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = ('username', 'email', 'password', 'bio', 'profile_picture')
 
     def create(self, validated_data):
+        # Use the built-in create_user method from the model manager
         user = User.objects.create_user(
             username=validated_data['username'],
-            email=validated_data['email'],
+            email=validated_data.get('email', ''),
             password=validated_data['password'],
             bio=validated_data.get('bio', ''),
             profile_picture=validated_data.get('profile_picture', None)
         )
+        # Create an auth token for the new user
         Token.objects.create(user=user)
         return user
 

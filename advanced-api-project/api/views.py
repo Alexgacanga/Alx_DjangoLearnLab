@@ -73,31 +73,27 @@ class BookCreateView(generics.CreateAPIView):
 
 
 class BookUpdateView(generics.UpdateAPIView):
-    """
-    UpdateView: Allows authenticated users to modify an existing book.
-
-    Custom Behavior:
-        - perform_update(): hook for custom logic during updates.
-    """
-    queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_object(self):
+        """
+        Retrieve the book instance using ?pk=<id>
+        """
+        pk = self.request.query_params.get("pk")
+        return generics.get_object_or_404(Book, pk=pk)
+
     def perform_update(self, serializer):
-        """
-        Custom update behavior.
-        This could include version tracking or activity logging.
-        """
         serializer.save()
 
 
 class BookDeleteView(generics.DestroyAPIView):
-    """
-    DeleteView: Allows authenticated users to delete an existing book.
-
-    Permissions:
-        - Must be authenticated.
-    """
-    queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        """
+        Retrieve the book instance using ?pk=<id>
+        """
+        pk = self.request.query_params.get("pk")
+        return generics.get_object_or_404(Book, pk=pk)

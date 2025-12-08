@@ -8,31 +8,24 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'bio', 'profile_picture']
+        fields = ('id', 'username', 'email', 'bio', 'profile_picture')
 
 # Serializer for registering a new user
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ('username', 'email', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
     def save(self, **kwargs):
-        # Create user without directly calling create_user
+        # Create user instance without using create_user
         user = User(
             username=self.validated_data['username'],
             email=self.validated_data['email']
         )
-        # Hash the password properly
+        # Properly hash the password
         user.set_password(self.validated_data['password'])
         user.save()
-        # Create auth token
+        # Create authentication token
         Token.objects.create(user=user)
         return user
-
-# Serializer for login (optional, token retrieval can also be handled in view)
-class LoginSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username', 'password']
-        extra_kwargs = {'password': {'write_only': True}}

@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from .models import Post, Comment
 from taggit.forms import TagWidget
 
-
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
@@ -14,13 +13,12 @@ class RegisterForm(UserCreationForm):
 
 # Form for creating/updating blog posts, including tags
 class PostForm(forms.ModelForm):
+    # Use TagWidget directly on the field
+    tags = forms.CharField(widget=TagWidget(), required=False)
+
     class Meta:
         model = Post
         fields = ['title', 'content', 'tags']
-        widgets = {
-            # This ensures the checker detects TagWidget usage
-            'tags': TagWidget(attrs={'placeholder': 'Add tags separated by commas'}),
-        }
 
 # Form for creating/updating comments
 class CommentForm(forms.ModelForm):

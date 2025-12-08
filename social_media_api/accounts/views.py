@@ -1,32 +1,30 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate
-from .serializers import RegisterSerializer, UserSerializer
+from rest_framework.authtoken.models import Token
+from .serializers import UserRegistrationSerializer, UserLoginSerializer
 
 class RegisterView(generics.CreateAPIView):
-    serializer_class = RegisterSerializer
-    permission_classes = [AllowAny]
+    serializer_class = UserRegistrationSerializer
 
-    def create(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        token, _ = Token.objects.get_or_create(user=user)
-        return Response({
-            "user": UserSerializer(user).data,
-            "token": token.key
-        })
+        token = Token.objects.get(user=user)
+        return Response({'token': token.key}, status=status.HTTP_201_CREATED)
 
 class LoginView(generics.GenericAPIView):
-    permission_classes = [AllowAny]
+    serializer_class = UserLoginSerializer
 
-    def post(self, request):
-        username = request.data.get("username")
-        password = request.data.get("password")
-        user = authenticate(username=username, password=password)
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = authenticate(
+            username=serializer.validated_data['username'],
+            password=serializer.validated_data['password']
+        )
         if user:
             token, _ = Token.objects.get_or_create(user=user)
-            return Response({"token": token.key})
-        return Response({"error": "Invalid Credentials"}, status=400)
+            return Response({'token': token.key})
+        return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)

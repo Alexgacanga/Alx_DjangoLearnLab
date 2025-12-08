@@ -151,3 +151,5 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True # Redirect all HTTP to HTTPS
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = Tr
+
+    PORT = os.environ.get('PORT', '8000')
